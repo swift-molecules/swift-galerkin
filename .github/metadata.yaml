@@ -1,0 +1,7 @@
+description: "The Galerkin method for Swift: reference elements, quadrature and assembly of finite-element matrices into sparse ones."
+topics:
+  - finite-elements
+  - numerics
+homepage: "https://swift-institute.org"
+readme:
+  family: E
