@@ -1,7 +1,12 @@
 # swift-galerkin
 
-Use this package to turn a mesh into the sparse matrices of a finite-element model: reference elements, quadrature, numbered and held unknowns, and assembly into swift-sparse. Being built; see swift-institute/Issues#336.
+Use this package to turn a mesh into the sparse matrices of a finite-element model. Map each element from a reference cell, `Galerkin.Reference.Quadrilateral` (bilinear on [−1, 1]²) or `Galerkin.Reference.Triangle` (linear on (0, 0), (1, 0), (0, 1)): `shape(at:)` gives the shape functions and their derivatives at a point, `Galerkin.Jacobian(_:corners:)` the map's derivative, its determinant and the derivatives along x and y, and `quadrature(degree:)` a Gauss rule exact to that total degree. Integrate an element's matrix with them; what the matrix means (a plate, a membrane, air) is the caller's. `Galerkin.Unknowns` numbers a fixed count of components at every vertex, skipping held ones; `Galerkin.Rotation` takes two of a vertex's components in a turned frame, which is how a constraint along a curved edge is imposed; `Galerkin.Assembly` adds element matrices, corner by corner, into the entries of a swift-sparse `Sparse.Symmetric`, whose eigenpairs swift-eigen finds.
 
 ## Laws
 
-- None yet.
+- **Quadrature.** `quadrature(degree: d)` integrates every polynomial of total degree at most `d` exactly, to rounding. The square's rule is the tensor product of ⌊d/2⌋ + 1 Gauss–Legendre points, so an odd `d` is sharp: one more degree in ξ alone is missed. The triangle's is the square's collapsed onto it (Duffy), with one more point across; its points are inside the triangle and its weights positive. `Galerkin.Quadrature.gauss(count:)` is the one-dimensional rule, nodes ascending.
+- **Shape functions.** At every point the shape functions add up to one and their derivatives to zero: they are a partition of unity, so a constant field is reproduced. Each is one at its own corner and zero at the others, and on any element they reproduce a linear field and its gradient.
+- **Jacobian.** The determinant is positive where the element keeps the reference cell's orientation (corners counterclockwise), and integrated over the reference cell it is the element's area. `cartesian(xi:eta:)` applies J⁻¹, which also turns covariant components into Cartesian ones.
+- **Unknowns.** Numbered from zero, vertex by vertex and component by component, held ones skipped; `count` is the order of the assembled matrices.
+- **Rotation.** With t = (cos, sin) and n = (−sin, cos), a vertex's components (a, b) along the axes are p t + q n for its turned components (p, q). An element matrix A becomes Tᵀ A T before it is added, so holding p or q holds the motion along t or n.
+- **Assembly.** Element matrices are symmetric, row-major over their corners' components corner by corner. The assembled matrix equals the dense sum of every element's Tᵀ A T, restricted to the unknowns that are not held.

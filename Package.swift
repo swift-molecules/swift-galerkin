@@ -16,14 +16,16 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swift-molecules/swift-sparse.git", branch: "main"),
-        .package(url: "https://github.com/swift-atoms/swift-mesh.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-point.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-numeric.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "Galerkin",
             dependencies: [
                 .product(name: "Sparse", package: "swift-sparse"),
-                .product(name: "Mesh", package: "swift-mesh"),
+                .product(name: "Point", package: "swift-point"),
+                .product(name: "Numeric", package: "swift-numeric"),
             ]
         ),
         .testTarget(
