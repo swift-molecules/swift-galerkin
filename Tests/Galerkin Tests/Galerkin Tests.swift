@@ -154,7 +154,9 @@ extension `Galerkin Tests`.Shape {
 
     @Test
     func `Shape functions reproduce a linear field and its gradient on a distorted element`() {
-        let corners = [Point<2, Double>(x: 0, y: 0), Point(x: 2, y: 0.3), Point(x: 1.7, y: 1.6), Point(x: -0.2, y: 1.1)]
+        let corners = [
+            Point<2, Double>(x: 0, y: 0), Point(x: 2, y: 0.3), Point(x: 1.7, y: 1.6), Point(x: -0.2, y: 1.1),
+        ]
         let field = { (p: Point<2, Double>) in 3 + 2 * p.x - 5 * p.y }
         let values = corners.map(field)
         for point in Self.points(16, inTriangle: false) {

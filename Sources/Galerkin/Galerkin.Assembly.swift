@@ -40,7 +40,6 @@ extension Galerkin.Assembly {
         for vertex in corners {
             for component in 0..<components { map.append(unknowns[vertex, component] ?? -1) }
         }
-        storage.reserveCapacity(storage.count + order * (order + 1) / 2)
         for a in 0..<order where map[a] >= 0 {
             for b in a..<order where map[b] >= 0 {
                 storage.append(
