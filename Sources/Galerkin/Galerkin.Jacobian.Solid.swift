@@ -29,9 +29,9 @@ extension Galerkin.Jacobian.Solid {
         var zeta = Vector<3, Scalar>.zero
         for index in corners.indices {
             let corner = corners[index].coordinates
-            xi = xi + corner.scaled(by: shape.xi[index])
-            eta = eta + corner.scaled(by: shape.eta[index])
-            zeta = zeta + corner.scaled(by: shape.zeta[index])
+            xi += corner.scaled(by: shape.xi[index])
+            eta += corner.scaled(by: shape.eta[index])
+            zeta += corner.scaled(by: shape.zeta[index])
         }
         self.init(xi: xi, eta: eta, zeta: zeta)
     }
