@@ -45,4 +45,42 @@ extension Galerkin.Reference.Triangle {
         }
         return Galerkin.Quadrature(points: points, weights: weights, degree: degree)
     }
+
+    /// A rule for an integrand that is singular as 1 / r at `point`, a point of the triangle (inside it, on an
+    /// edge or at a corner), and still exact for every polynomial of total degree `degree`.
+    ///
+    /// The triangle is cut at `point` into the triangles it makes with each edge, and `quadrature(degree:)` is
+    /// mapped onto each with its collapsed corner at `point`. There the rule's factor 1 − t is proportional to the
+    /// distance r, so an integrand f / r, with f smooth, times the map's determinant is bounded and the rule
+    /// converges. It converges slowly where `point` is close to an edge next to that edge's length, since 1 / r
+    /// along the edge is then nearly singular; a singular part known in closed form is best subtracted first. A
+    /// cut of no area, from a point on an edge, is left out.
+    public static func quadrature<Scalar: BinaryFloatingPoint>(
+        degree: Int,
+        around point: Point<2, Scalar>
+    ) -> Galerkin.Quadrature<2, Scalar> {
+        precondition(
+            point.x >= 0 && point.y >= 0 && point.x + point.y <= 1,
+            "the singular point lies in the triangle"
+        )
+        let rule = quadrature(degree: degree, Scalar.self)
+        let corners = corners(Scalar.self)
+        var points: [Point<2, Scalar>] = []
+        var weights: [Scalar] = []
+        for edge in 0..<3 {
+            let a = corners[edge]
+            let b = corners[(edge + 1) % 3]
+            // The cut (a, b, point) over the reference triangle: twice its area, the map's determinant.
+            let ratio = (b.x - a.x) * (point.y - a.y) - (b.y - a.y) * (point.x - a.x)
+            guard ratio > 0 else { continue }
+            for (reference, weight) in zip(rule.points, rule.weights) {
+                let s = reference.x
+                let t = reference.y
+                let r = 1 - s - t
+                points.append(Point(x: r * a.x + s * b.x + t * point.x, y: r * a.y + s * b.y + t * point.y))
+                weights.append(weight * ratio)
+            }
+        }
+        return Galerkin.Quadrature(points: points, weights: weights, degree: degree)
+    }
 }

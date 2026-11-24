@@ -31,7 +31,8 @@ let package = Package(
         .testTarget(
             name: "Galerkin Tests",
             dependencies: [
-                .target(name: "Galerkin")
+                .target(name: "Galerkin"),
+                .product(name: "Numeric", package: "swift-numeric"),
             ]
         ),
     ],
