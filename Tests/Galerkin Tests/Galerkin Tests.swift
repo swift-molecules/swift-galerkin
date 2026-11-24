@@ -87,14 +87,14 @@ extension `Galerkin Tests`.Quadrature {
 
     @Test
     func `Gauss nodes and weights match the closed forms`() {
-        let two = Galerkin.Quadrature<Double>.gauss(count: 2)
+        let two = Galerkin.Quadrature<1, Double>.gauss(count: 2)
         #expect(abs(two.nodes[1] - 1 / 3.0.squareRoot()) < 1e-15 && two.nodes[0] == -two.nodes[1])
         #expect(two.weights.allSatisfy { abs($0 - 1) < 1e-15 })
-        let three = Galerkin.Quadrature<Double>.gauss(count: 3)
+        let three = Galerkin.Quadrature<1, Double>.gauss(count: 3)
         #expect(three.nodes[1] == 0)
         #expect(abs(three.nodes[2] - 0.6.squareRoot()) < 1e-15)
         #expect(abs(three.weights[1] - 8 / 9.0) < 1e-15 && abs(three.weights[2] - 5 / 9.0) < 1e-15)
-        let float = Galerkin.Quadrature<Float>.gauss(count: 3)
+        let float = Galerkin.Quadrature<1, Float>.gauss(count: 3)
         #expect(abs(float.nodes[2] - Float(0.6).squareRoot()) < 1e-6)
     }
 }

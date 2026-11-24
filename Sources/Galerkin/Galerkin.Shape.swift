@@ -1,6 +1,6 @@
 extension Galerkin {
-    /// A reference cell's shape functions at one point: each one's value and its derivatives along ξ and η, one per
-    /// corner in the cell's own order.
+    /// A reference cell's shape functions at one point: each one's value and its derivatives along ξ and η, and
+    /// along ζ on a solid cell, one per corner in the cell's own order.
     public struct Shape<Scalar: BinaryFloatingPoint> {
         /// Nᵢ at the point.
         public let values: [Scalar]
@@ -8,13 +8,17 @@ extension Galerkin {
         public let xi: [Scalar]
         /// ∂Nᵢ/∂η at the point.
         public let eta: [Scalar]
+        /// ∂Nᵢ/∂ζ at the point on a solid cell; empty on a flat one.
+        public let zeta: [Scalar]
 
         @inlinable
-        public init(values: [Scalar], xi: [Scalar], eta: [Scalar]) {
+        public init(values: [Scalar], xi: [Scalar], eta: [Scalar], zeta: [Scalar] = []) {
             precondition(values.count == xi.count && values.count == eta.count, "one value and gradient per corner")
+            precondition(zeta.isEmpty || zeta.count == values.count, "no ζ, or one per corner")
             self.values = values
             self.xi = xi
             self.eta = eta
+            self.zeta = zeta
         }
     }
 }

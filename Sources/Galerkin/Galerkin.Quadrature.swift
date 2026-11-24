@@ -1,18 +1,18 @@
 internal import Numeric
 
 extension Galerkin {
-    /// Points of a reference cell and their weights: Σ wᵢ f(pᵢ) is the integral of f over the cell, exactly when f
-    /// is a polynomial of total degree at most `degree`.
-    public struct Quadrature<Scalar: BinaryFloatingPoint> {
-        /// The points, in the reference cell's coordinates (ξ, η).
-        public let points: [Point<2, Scalar>]
+    /// Points of an `N`-dimensional reference cell and their weights: Σ wᵢ f(pᵢ) is the integral of f over the
+    /// cell, exactly when f is a polynomial of total degree at most `degree`.
+    public struct Quadrature<let N: Int, Scalar: BinaryFloatingPoint> {
+        /// The points, in the reference cell's coordinates (ξ, η) or (ξ, η, ζ).
+        public let points: [Point<N, Scalar>]
         /// The weight of each point.
         public let weights: [Scalar]
         /// The highest total degree integrated exactly.
         public let degree: Int
 
         @inlinable
-        public init(points: [Point<2, Scalar>], weights: [Scalar], degree: Int) {
+        public init(points: [Point<N, Scalar>], weights: [Scalar], degree: Int) {
             precondition(points.count == weights.count, "one weight per point")
             self.points = points
             self.weights = weights
@@ -24,12 +24,14 @@ extension Galerkin {
 extension Galerkin.Quadrature {
     /// Σ wᵢ f(pᵢ).
     @inlinable
-    public func integral(_ integrand: (Point<2, Scalar>) -> Scalar) -> Scalar {
+    public func integral(_ integrand: (Point<N, Scalar>) -> Scalar) -> Scalar {
         var sum: Scalar = 0
         for (point, weight) in zip(points, weights) { sum += weight * integrand(point) }
         return sum
     }
+}
 
+extension Galerkin.Quadrature where N == 1 {
     /// The `count`-point Gauss–Legendre rule on [−1, 1], exact for polynomials of degree 2 `count` − 1, its nodes
     /// ascending.
     ///

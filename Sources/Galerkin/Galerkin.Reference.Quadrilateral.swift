@@ -37,9 +37,9 @@ extension Galerkin.Reference.Quadrilateral {
     public static func quadrature<Scalar: BinaryFloatingPoint>(
         degree: Int,
         _: Scalar.Type = Scalar.self
-    ) -> Galerkin.Quadrature<Scalar> {
+    ) -> Galerkin.Quadrature<2, Scalar> {
         precondition(degree >= 0, "a degree is not negative")
-        let line = Galerkin.Quadrature<Scalar>.gauss(count: degree / 2 + 1)
+        let line = Galerkin.Quadrature<1, Scalar>.gauss(count: degree / 2 + 1)
         var points: [Point<2, Scalar>] = []
         var weights: [Scalar] = []
         for (eta, weight) in zip(line.nodes, line.weights) {

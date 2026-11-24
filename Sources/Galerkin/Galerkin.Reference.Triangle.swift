@@ -29,10 +29,10 @@ extension Galerkin.Reference.Triangle {
     public static func quadrature<Scalar: BinaryFloatingPoint>(
         degree: Int,
         _: Scalar.Type = Scalar.self
-    ) -> Galerkin.Quadrature<Scalar> {
+    ) -> Galerkin.Quadrature<2, Scalar> {
         precondition(degree >= 0, "a degree is not negative")
-        let along = Galerkin.Quadrature<Scalar>.gauss(count: degree / 2 + 1)
-        let across = Galerkin.Quadrature<Scalar>.gauss(count: (degree + 1) / 2 + 1)
+        let along = Galerkin.Quadrature<1, Scalar>.gauss(count: degree / 2 + 1)
+        let across = Galerkin.Quadrature<1, Scalar>.gauss(count: (degree + 1) / 2 + 1)
         var points: [Point<2, Scalar>] = []
         var weights: [Scalar] = []
         for (v, weight) in zip(across.nodes, across.weights) {
